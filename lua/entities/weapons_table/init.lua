@@ -31,9 +31,16 @@ function ENT:Initialize()
 
     self:PhysWake()
 
-    hook.Add("WeaponEquip", self.hookId, self:OnWeaponEquipedOrRemoved)
-    hook.Add("EntityRemoved", self.hookId, self:OnWeaponEquipedOrRemoved)
-    net.Receive("Andrei15193_Weapons_Table_Update", self:HandleUpdateNetMessage)
+    local copy = self;
+    hook.Add("WeaponEquip", self.hookId, function(weapon)
+        copy:OnWeaponEquipedOrRemoved(weapon)
+    end)
+    hook.Add("EntityRemoved", self.hookId, function(entity)
+        copy:OnWeaponEquipedOrRemoved(entity)
+    end)
+    net.Receive("Andrei15193_Weapons_Table_Update", function()
+        copy:HandleUpdateNetMessage()
+    end)
 end
 
 function ENT:Use(activator, caller)
@@ -97,7 +104,10 @@ end
 function ENT:OnWeaponEquipedOrRemoved(weapon)
     if self.weapon == weapon then
         self.weapon = nil
-        timer.Create(self.timerId, self.state.timerDelayInSeconds, 1, self:SpawnWeapon)
+        local copy = self
+        timer.Create(self.timerId, self.state.timerDelayInSeconds, 1, function()
+            copy:SpawnWeapon()
+        end)
     end
 end
 
