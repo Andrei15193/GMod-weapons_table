@@ -1,0 +1,12 @@
+{
+    "title": "Weapons Table",
+    "type": "entity",
+    "tags": [
+        "fun"
+    ],
+    "ignore": [
+        "LICENSE",
+        "icon.jpg",
+        "*.git/*"
+    ]
+}
